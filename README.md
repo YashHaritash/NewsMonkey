@@ -1,8 +1,18 @@
-# React + Vite
+# NewsMonkey
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+NewsMonkey is a simple, class-based React app that fetches and displays news articles using the [NewsAPI](https://newsapi.org/).
 
-Currently, two official plugins are available:
+## Features
+- Fetches real-time news data from NewsAPI.
+- Displays news headlines and descriptions in a clean UI.
+- Utilizes React class components for structure and learning.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Requirements
+- Node.js and npm installed.
+- NewsAPI API key (free to obtain at [newsapi.org](https://newsapi.org/)).
+
+## Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/YashHaritash/NewsMonkey.git
+   cd newsmonkey
