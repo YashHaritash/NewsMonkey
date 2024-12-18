@@ -10,6 +10,7 @@ export class News extends Component {
       articles: this.articles,
       loading: false,
       page: 1,
+      totalResults: 0,
     };
   }
 
@@ -18,7 +19,10 @@ export class News extends Component {
       "https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=57f1029c0d784b5f82b7b64937b17043";
     let data = await fetch(url);
     let parsedData = await data.json();
-    this.setState({ articles: parsedData.articles });
+    this.setState({
+      articles: parsedData.articles,
+      totalResults: parsedData.totalResults,
+    });
   }
 
   handlePrev = async () => {
@@ -99,6 +103,9 @@ export class News extends Component {
             type="button"
             className="btn btn-primary btn-sm mx-2 my-3"
             onClick={this.handleNext}
+            disabled={
+              this.state.page + 1 > Math.ceil(this.state.totalResults / 20)
+            }
           >
             Next
           </button>
