@@ -38,7 +38,7 @@ export class News extends Component {
     this.setState({
       loading: true,
     });
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=57f1029c0d784b5f82b7b64937b17043&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
     let data = await fetch(url);
     this.props.setProgress(30);
     let parsedData = await data.json();
@@ -66,26 +66,21 @@ export class News extends Component {
   };
 
   fetchMoreData = async () => {
-    this.setState({ page: this.state.page + 1 });
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=57f1029c0d784b5f82b7b64937b17043&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+    const nextPage = this.state.page + 1; // Calculate the next page
+    this.setState({ page: nextPage }); // Update the state first
+
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${nextPage}&pageSize=${this.props.pageSize}`;
     let data = await fetch(url);
     let parsedData = await data.json();
+
+    // Append new articles to the existing articles array
     this.setState({
-      articles: this.state.articles.concat(parsedData.articles),
+      articles: [...this.state.articles, ...parsedData.articles],
       totalResults: parsedData.totalResults,
     });
   };
 
-  //   componentDidMount() {
-  //     fetch(
-  //       "https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=57f1029c0d784b5f82b7b64937b17043"
-  //     )
-  //       .then((response) => response.json())
-  //       .then((data) => {
-  //         this.setState({ articles: data.articles || [] }); // Use a fallback to an empty array
-  //       })
-  //       .catch((error) => console.error("Error fetching data:", error));
-  //   }
+
 
   render() {
     return (
