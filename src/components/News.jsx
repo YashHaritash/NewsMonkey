@@ -28,11 +28,11 @@ export class News extends Component {
     };
   }
 
-  async componentDidMount() {
+  async updateNews() {
     this.setState({
       loading: true,
     });
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=57f1029c0d784b5f82b7b64937b17043&page=1&pageSize=${this.props.pageSize}`;
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=57f1029c0d784b5f82b7b64937b17043&page=${this.state.page}&pageSize=${this.props.pageSize}`;
     let data = await fetch(url);
     let parsedData = await data.json();
     this.setState({
@@ -42,40 +42,18 @@ export class News extends Component {
     });
   }
 
+  async componentDidMount() {
+    this.updateNews();
+  }
+
   handlePrev = async () => {
-    this.setState({
-      loading: true,
-    });
-    let url = `https://newsapi.org/v2/top-headlines?country=${
-      this.props.country
-    }&category=${this.props.category}&apiKey=57f1029c0d784b5f82b7b64937b17043&page=${
-      this.state.page - 1
-    }&pageSize=${this.props.pageSize}`;
-    let data = await fetch(url);
-    let parsedData = await data.json();
-    this.setState({
-      articles: parsedData.articles,
-      page: this.state.page - 1, // Corrected here
-      loading: false,
-    });
+    this.setState({ page: this.state.page - 1 });
+    this.updateNews();
   };
 
   handleNext = async () => {
-    this.setState({
-      loading: true,
-    });
-    let url = `https://newsapi.org/v2/top-headlines?country=${
-      this.props.country
-    }&category=${this.props.category}&apiKey=57f1029c0d784b5f82b7b64937b17043&page=${
-      this.state.page + 1
-    }&pageSize=${this.props.pageSize}`;
-    let data = await fetch(url);
-    let parsedData = await data.json();
-    this.setState({
-      articles: parsedData.articles,
-      page: this.state.page + 1, // Corrected here
-      loading: false,
-    });
+    this.setState({ page: this.state.page + 1 });
+    this.updateNews();
   };
 
   //   componentDidMount() {
@@ -116,6 +94,9 @@ export class News extends Component {
                         : "https://assets.bwbx.io/images/users/iqjWHBFdfxIU/iAVMkmIca.mQ/v0/1200x800.jpg"
                     }
                     newsUrl={element.url}
+                    author={element.author}
+                    date={element.publishedAt}
+                    source={element.source.name}
                   />
                 </div>
               );
