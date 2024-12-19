@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import NewsItem from "./NewsItem";
 import Spinner from "./Spinner";
 import PropTypes from "prop-types";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 export class News extends Component {
   static defaultProps = {
@@ -17,8 +18,8 @@ export class News extends Component {
   };
 
   articles = [];
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     console.log("Hello I am a constructor from News Component");
     this.state = {
       articles: this.articles,
@@ -26,6 +27,10 @@ export class News extends Component {
       page: 1,
       totalResults: 0,
     };
+    document.title = this.capitalizeWord(`${this.props.category} - NewsMonkey`);
+  }
+  capitalizeWord(word) {
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
   }
 
   async updateNews() {
@@ -56,6 +61,17 @@ export class News extends Component {
     this.updateNews();
   };
 
+  fetchMoreData = async () => {
+    this.setState({ page: this.state.page + 1 });
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=57f1029c0d784b5f82b7b64937b17043&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+    let data = await fetch(url);
+    let parsedData = await data.json();
+    this.setState({
+      articles: this.state.articles.concat(parsedData.articles),
+      totalResults: parsedData.totalResults,
+    });
+  };
+
   //   componentDidMount() {
   //     fetch(
   //       "https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=57f1029c0d784b5f82b7b64937b17043"
@@ -69,40 +85,51 @@ export class News extends Component {
 
   render() {
     return (
-      <div className="container my-3">
-        <h2>NewsMonkey - Top Headlines</h2>
+      <>
+        <h2 className="my-3">
+          NewsMonkey - Top {this.capitalizeWord(`${this.props.category}`)}{" "}
+          Headlines
+        </h2>
         {this.state.loading && <Spinner />}
-        <div className="row">
-          {!this.state.loading &&
-            this.state.articles.map((element) => {
-              return (
-                <div className="col-md-4" key={element.url}>
-                  <NewsItem
-                    title={
-                      element.title
-                        ? element.title.slice(0, 45)
-                        : "No Title Available"
-                    }
-                    description={
-                      element.description
-                        ? element.description.slice(0, 88)
-                        : "No Description Available"
-                    }
-                    imageUrl={
-                      element.urlToImage
-                        ? element.urlToImage
-                        : "https://assets.bwbx.io/images/users/iqjWHBFdfxIU/iAVMkmIca.mQ/v0/1200x800.jpg"
-                    }
-                    newsUrl={element.url}
-                    author={element.author}
-                    date={element.publishedAt}
-                    source={element.source.name}
-                  />
-                </div>
-              );
-            })}
-        </div>
-        <div className="container">
+        <InfiniteScroll
+          dataLength={this.state.articles.length}
+          next={this.fetchMoreData}
+          hasMore={this.state.articles.length < this.state.totalResults}
+          loader={<Spinner />}
+        >
+          <div className="continer">
+            <div className="row">
+              {this.state.articles.map((element) => {
+                return (
+                  <div className="col-md-4" key={element.url}>
+                    <NewsItem
+                      title={
+                        element.title
+                          ? element.title.slice(0, 45)
+                          : "No Title Available"
+                      }
+                      description={
+                        element.description
+                          ? element.description.slice(0, 88)
+                          : "No Description Available"
+                      }
+                      imageUrl={
+                        element.urlToImage
+                          ? element.urlToImage
+                          : "https://assets.bwbx.io/images/users/iqjWHBFdfxIU/iAVMkmIca.mQ/v0/1200x800.jpg"
+                      }
+                      newsUrl={element.url}
+                      author={element.author}
+                      date={element.publishedAt}
+                      source={element.source.name}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </InfiniteScroll>
+        {/* <div className="container">
           <button
             type="button"
             className="btn btn-secondary btn-sm mx-2 my-3"
@@ -125,8 +152,8 @@ export class News extends Component {
           <p>
             <strong className="mx-2 my-3">Page : {this.state.page}</strong>
           </p>
-        </div>
-      </div>
+        </div> */}
+      </>
     );
   }
 }
