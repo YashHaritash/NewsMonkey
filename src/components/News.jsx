@@ -14,7 +14,6 @@ const News = (props) => {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
-  // document.title = capitalizeWord(`${props.category} - NewsMonkey`);
 
   const updateNews = async () => {
     props.setProgress(10);
@@ -31,6 +30,7 @@ const News = (props) => {
   };
 
   useEffect(() => {
+    document.title = capitalizeWord(`${props.category} - NewsMonkey`);
     updateNews();
   }, []);
 
